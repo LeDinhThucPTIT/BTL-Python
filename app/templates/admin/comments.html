@@ -15,8 +15,11 @@
     <td>{{ c.title }}</td>
     <td>{{ c.content }}</td>
     <td>
-      <a href="/comments/delete/{{ c.id }}" class="btn btn-sm btn-danger"
-        >Xóa</a
+      <a
+        href="{{ url_for('admin.delete_comment', id=c.id) }}"
+        class="btn btn-sm btn-danger"
+        onclick="return confirm('Xoá bình luận này?')"
+        >Xoá</a
       >
     </td>
   </tr>

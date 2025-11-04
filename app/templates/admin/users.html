@@ -15,7 +15,17 @@
     <td>{{ u.email }}</td>
     <td>{{ u.role }}</td>
     <td>
-      <a href="/users/delete/{{ u.id }}" class="btn btn-sm btn-danger">Xóa</a>
+      {% if u.role != "admin" %}
+      <a
+        href="{{ url_for('admin.delete_user', id=u.id) }}"
+        class="btn btn-sm btn-danger"
+        onclick="return confirm('Xóa người dùng này?')"
+      >
+        Xóa
+      </a>
+      {% else %}
+      <span class="text-muted">Không thể xoá admin</span>
+      {% endif %}
     </td>
   </tr>
   {% endfor %}

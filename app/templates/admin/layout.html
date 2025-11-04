@@ -37,11 +37,11 @@
   <body>
     <div class="sidebar">
       <h4 class="text-center text-light mb-3">📚 Admin Panel</h4>
-      <a href="/dashboard">🏠 Dashboard</a>
-      <a href="/books">📖 Quản lý sách</a>
-      <a href="/users">👥 Người dùng</a>
-      <a href="/comments">💬 Bình luận</a>
-      <a href="/logout">🚪 Đăng xuất</a>
+      <a href="{{ url_for('admin.dashboard') }}">🏠 Dashboard</a>
+      <a href="{{ url_for('admin.books') }}">📖 Quản lý sách</a>
+      <a href="{{ url_for('admin.users') }}">👥 Người dùng</a>
+      <a href="{{ url_for('admin.comments') }}">💬 Bình luận</a>
+      <a href="{{ url_for('admin.logout_admin') }}">🚪 Đăng xuất</a>
     </div>
     <div class="content">
       {% with messages = get_flashed_messages(with_categories=true) %} {% for

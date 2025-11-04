@@ -4,13 +4,13 @@ import os
 from werkzeug.utils import secure_filename
 
 # --------------------------
-# ⚙️ Tạo Blueprint admin
+# Tạo Blueprint admin
 # --------------------------
-admin_bp = Blueprint("admin", __name__, url_prefix="/admin", template_folder="templates")
+admin_bp = Blueprint("admin", __name__, url_prefix="/admin", template_folder="templates/admin")
 
 
 # --------------------------
-# 💾 Kết nối Database
+# Kết nối Database
 # --------------------------
 def get_db():
     return mysql.connector.connect(
@@ -32,12 +32,12 @@ def get_upload_folder():
 
 
 # --------------------------
-# 🔐 Trang đăng nhập admin
+#  Trang đăng nhập admin
 # --------------------------
 @admin_bp.route("/login_admin", methods=["GET", "POST"])
 def login_admin():
-    # ✅ Nếu đã đăng nhập rồi -> đi thẳng vào dashboard
-    if "admin_id" in session:
+    # Nếu đã đăng nhập và là admin -> vào dashboard luôn
+    if "user_id" in session and session.get("role") == "admin":
         return redirect(url_for("admin.dashboard"))
 
     if request.method == "POST":
@@ -50,32 +50,33 @@ def login_admin():
         admin = cursor.fetchone()
 
         if admin:
-            session["admin_id"] = admin["id"]
-            session["admin_name"] = admin["username"]
+            session["user_id"] = admin["id"]
+            session["username"] = admin["username"]
+            session["role"] = "admin"
             flash("Đăng nhập thành công!", "success")
-            return redirect(url_for("admin.dashboard"))  # ✅ Chuyển luôn vào dashboard
+            return redirect(url_for("admin.dashboard"))
         else:
             flash("Sai tài khoản hoặc không phải admin!", "danger")
 
-    return render_template("admin/login.html")
+    return render_template("login.html")  # KHÔNG cần admin/login.html nữa
 
 
 # --------------------------
-# 🚪 Đăng xuất admin
+#  Đăng xuất admin
 # --------------------------
 @admin_bp.route("/logout")
 def logout_admin():
     session.clear()
-    return redirect(url_for("admin.login_admin"))
+    return redirect(url_for("login_page"))
 
 
 # --------------------------
-# 📊 Trang tổng quan
+#  Trang tổng quan
 # --------------------------
 @admin_bp.route("/dashboard")
 def dashboard():
-    if "admin_id" not in session:
-        return redirect(url_for("admin.login_admin"))
+    if "user_id" not in session or session.get("role") != "admin":
+        return redirect(url_for("login_page"))
 
     db = get_db()
     cur = db.cursor(dictionary=True)
@@ -93,7 +94,7 @@ def dashboard():
     total_reads = cur.fetchone()["total_reads"]
 
     return render_template(
-        "admin/dashboard.html",
+        "dashboard.html",
         total_books=total_books,
         total_users=total_users,
         total_comments=total_comments,
@@ -102,24 +103,24 @@ def dashboard():
 
 
 # --------------------------
-# 📚 Quản lý sách
+#  Quản lý sách
 # --------------------------
 @admin_bp.route("/books")
 def books():
-    if "admin_id" not in session:
-        return redirect(url_for("admin.login_admin"))
+    if "user_id" not in session or session.get("role") != "admin":
+        return redirect(url_for("login_page"))
 
     db = get_db()
     cur = db.cursor(dictionary=True)
     cur.execute("SELECT * FROM books ORDER BY created_at DESC")
     books = cur.fetchall()
-    return render_template("admin/books.html", books=books)
+    return render_template("books.html", books=books)
 
 
 @admin_bp.route("/books/add", methods=["GET", "POST"])
 def add_book():
-    if "admin_id" not in session:
-        return redirect(url_for("admin.login_admin"))
+    if "user_id" not in session or session.get("role") != "admin":
+        return redirect(url_for("login_page"))
 
     if request.method == "POST":
         title = request.form.get("title")
@@ -152,19 +153,19 @@ def add_book():
         cur.execute("""
             INSERT INTO books (title, author, genre, summary, cover_image, file_path, uploaded_by)
             VALUES (%s, %s, %s, %s, %s, %s, %s)
-        """, (title, author, genre, summary, cover_path, book_path, session["admin_id"]))
+        """, (title, author, genre, summary, cover_path, book_path, session["user_id"]))
         db.commit()
 
         flash("📘 Thêm sách thành công!", "success")
         return redirect(url_for("admin.books"))
 
-    return render_template("admin/add_book.html")
+    return render_template("add_book.html")
 
 
 @admin_bp.route("/books/delete/<int:id>")
 def delete_book(id):
-    if "admin_id" not in session:
-        return redirect(url_for("admin.login_admin"))
+    if "user_id" not in session or session.get("role") != "admin":
+        return redirect(url_for("login_page"))
 
     db = get_db()
     cur = db.cursor()
@@ -175,24 +176,24 @@ def delete_book(id):
 
 
 # --------------------------
-# 👥 Quản lý người dùng
+#  Quản lý người dùng
 # --------------------------
 @admin_bp.route("/users")
 def users():
-    if "admin_id" not in session:
-        return redirect(url_for("admin.login_admin"))
+    if "user_id" not in session or session.get("role") != "admin":
+        return redirect(url_for("login_page"))
 
     db = get_db()
     cur = db.cursor(dictionary=True)
     cur.execute("SELECT id, username, email, role FROM users ORDER BY id DESC")
     users = cur.fetchall()
-    return render_template("admin/users.html", users=users)
+    return render_template("users.html", users=users)
 
 
 @admin_bp.route("/users/delete/<int:id>")
 def delete_user(id):
-    if "admin_id" not in session:
-        return redirect(url_for("admin.login_admin"))
+    if "user_id" not in session or session.get("role") != "admin":
+        return redirect(url_for("login_page"))
 
     db = get_db()
     cur = db.cursor()
@@ -203,12 +204,12 @@ def delete_user(id):
 
 
 # --------------------------
-# 💬 Quản lý bình luận
+# Quản lý bình luận
 # --------------------------
 @admin_bp.route("/comments")
 def comments():
-    if "admin_id" not in session:
-        return redirect(url_for("admin.login_admin"))
+    if "user_id" not in session or session.get("role") != "admin":
+        return redirect(url_for("login_page"))
 
     db = get_db()
     cur = db.cursor(dictionary=True)
@@ -220,13 +221,13 @@ def comments():
         ORDER BY c.created_at DESC
     """)
     comments = cur.fetchall()
-    return render_template("admin/comments.html", comments=comments)
+    return render_template("comments.html", comments=comments)
 
 
 @admin_bp.route("/comments/delete/<int:id>")
 def delete_comment(id):
-    if "admin_id" not in session:
-        return redirect(url_for("admin.login_admin"))
+    if "user_id" not in session or session.get("role") != "admin":
+        return redirect(url_for("login_page"))
 
     db = get_db()
     cur = db.cursor()

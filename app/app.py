@@ -7,7 +7,7 @@ import os
 import fitz
 
 # -------------------------
-# 🧩 Import Blueprint admin
+# Import Blueprint admin
 from admin import admin_bp
 # -------------------------
 
@@ -22,7 +22,7 @@ app.register_blueprint(admin_bp)
 
 
 # -------------------------
-# 📂 Thư mục upload
+# Thư mục upload
 UPLOAD_COVER_FOLDER = os.path.join(app.root_path, 'static', 'images', 'Book')
 UPLOAD_BOOK_FOLDER = os.path.join(app.root_path, 'static', 'books')
 UPLOAD_HTML_FOLDER = os.path.join(app.root_path, 'static', 'book_html')
@@ -39,7 +39,7 @@ app.config.update({
 
 
 # -------------------------
-# 💾 Kết nối database
+# Kết nối database
 def get_db():
     if "db" not in g:
         g.db = mysql.connector.connect(
@@ -60,14 +60,14 @@ def close_db(exception=None):
 
 
 # -------------------------
-# 🧠 LOGIN PAGE
+#  LOGIN PAGE
 @app.route("/")
 def login_page():
     return render_template("login.html")
 
 
 # -------------------------
-# 🔐 ĐĂNG NHẬP
+#  ĐĂNG NHẬP
 @app.route("/login", methods=["POST"])
 def login():
     db = get_db()
@@ -95,14 +95,14 @@ def login():
 
 
 # -------------------------
-# 🚪 Đăng xuất
+# Đăng xuất
 @app.route("/logout")
 def logout():
     session.clear()
     return redirect("/")
 
 # ------------------------------------------
-# 🧾 Đăng ký
+# Đăng ký
 @app.route("/register", methods=["POST"])
 def register():
     db = get_db()
@@ -130,7 +130,7 @@ def register():
 
 
 # ------------------------------------------
-# 🔄 Quên mật khẩu
+#  Quên mật khẩu
 @app.route("/forgot", methods=["POST"])
 def forgot_password():
     db = get_db()
@@ -172,7 +172,7 @@ def inject_user():
 
     return dict(user=user)
 
-# 🏠 Các trang chính
+#  Các trang chính
 @app.route("/home")
 def home():
     db = get_db()
@@ -215,7 +215,7 @@ def setting():
             avatar.save(path)
             avatar_path = f"/static/images/Book/{filename}"
 
-        # 🟢 Cập nhật SQL thêm trường name
+        # Cập nhật SQL thêm trường name
         if avatar_path:
             cursor.execute("""
                 UPDATE users 
@@ -231,7 +231,7 @@ def setting():
 
         db.commit()
 
-    # 🟢 Lấy thông tin user đầy đủ (có cột name)
+    # Lấy thông tin user đầy đủ (có cột name)
     cursor.execute("SELECT * FROM users WHERE id = %s", (user_id,))
     user = cursor.fetchone()
     cursor.close()
@@ -248,7 +248,7 @@ def history():
 # ------------------------------------------
 
 # ------------------------------------------
-# 📚 API lấy danh sách sách
+#  API lấy danh sách sách
 @app.route('/api/books', methods=['GET'])
 def get_books():
     db = get_db()
@@ -264,7 +264,7 @@ def get_books():
 
 
 # ------------------------------------------
-# 📤 Upload sách
+#  Upload sách
 def allowed_file(filename, allowed):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in allowed
 
@@ -345,7 +345,7 @@ def upload_book():
 
 
 # ------------------------------------------
-# 📖 Đọc sách
+#  Đọc sách
 @app.route("/read/<int:book_id>")
 def read_book(book_id):
     db = get_db()
@@ -373,7 +373,7 @@ def read_book(book_id):
 
 # ------------------------------------------
 # ------------------------------------------
-# 📚 Lưu lịch sử đọc sách
+#  Lưu lịch sử đọc sách
 @app.route("/api/reading-history", methods=["POST"])
 def save_reading_history():
     if "user_id" not in session:
@@ -475,7 +475,7 @@ def delete_reading_history(book_id):
 
 
 # ------------------------------------------
-# ❌ Xoá sách
+#  Xoá sách
 @app.route("/api/delete-book/<int:book_id>", methods=["DELETE"])
 def delete_book(book_id):
     db = get_db()
@@ -504,7 +504,7 @@ def delete_book(book_id):
 
 
 # ------------------------------------------
-# 🕘 Lịch sử upload của người dùng
+# Lịch sử upload của người dùng
 @app.route("/api/user-history", methods=["GET"])
 def get_user_history():
     db = get_db()
@@ -538,7 +538,7 @@ def book_detail(book_id):
     return render_template("book-detail.html", book=book)
 
 # ------------------------------------------
-# 💖 Thả tim / Bỏ tim (GET trạng thái + POST toggle)
+# Thả tim / Bỏ tim (GET trạng thái + POST toggle)
 @app.route("/api/book/<int:book_id>/favorite", methods=["GET", "POST"])
 def favorite_book(book_id):
     db = get_db()
@@ -584,7 +584,7 @@ def favorite_book(book_id):
         return jsonify({"error": "Lỗi server"}), 500
 # ------------------------------------------
 # ------------------------------------------
-# 📑 Lưu / Bỏ lưu sách
+#  Lưu / Bỏ lưu sách
 @app.route("/api/book/<int:book_id>/save", methods=["GET", "POST"])
 def toggle_save(book_id):
     db = get_db()
@@ -641,7 +641,7 @@ def toggle_save(book_id):
 
 # ------------------------------------------
 # ------------------------------------------
-# 🔖💖 Lấy danh sách sách đã lưu hoặc yêu thích
+#  Lấy danh sách sách đã lưu hoặc yêu thích
 @app.route("/api/saves", methods=["GET"])
 def get_saved_and_favorite_books():
     if "user_id" not in session:
@@ -736,7 +736,7 @@ def remove_favorite():
     return jsonify({"success": True, "message": "Đã xoá khỏi yêu thích."})
 
 # ------------------------------------------
-# 💬 Comment: Lấy và thêm bình luận
+#  Comment: Lấy và thêm bình luận
 @app.route("/api/book/<int:book_id>/comments", methods=["GET", "POST"])
 def handle_comments(book_id):
     db = get_db()
@@ -759,7 +759,7 @@ def handle_comments(book_id):
             cursor.close()
             return jsonify(comments), 200
 
-        # ✏️ Thêm bình luận mới
+        #  Thêm bình luận mới
         data = request.get_json()
         content = data.get("content", "").strip()
         if not content:
@@ -783,7 +783,7 @@ def handle_comments(book_id):
         return jsonify({"error": "Lỗi server"}), 500
     
     # ------------------------------------------
-# ⭐ Đánh giá sao
+#  Đánh giá sao
 @app.route("/api/book/<int:book_id>/rating", methods=["GET", "POST"])
 def handle_rating(book_id):
     if "user_id" not in session:
@@ -831,6 +831,6 @@ def handle_rating(book_id):
 
 
 # ------------------------------------------
-# 🚀 Chạy server
+# Chạy server
 if __name__ == "__main__":
     app.run(debug=True)
