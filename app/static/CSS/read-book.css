@@ -1,0 +1,408 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Poppins", sans-serif;
+}
+
+/* Khung tổng */
+body {
+  display: flex;
+  width: 100%;
+  height: 100vh;
+  background-color: var(--colorBG);
+  overflow: hidden;
+}
+
+/* Sidebar bên trái */
+.Header {
+  margin-top: 30px;
+  width: 120px;
+  height: 100vh;
+  gap: 239px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border-right: 3px solid #c9c9c9;
+  position: fixed;
+}
+.Header .logo {
+  width: 60px;
+  height: 60px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.Header .menu {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 50px;
+}
+
+/* Icon menu */
+.Header .menu .nav-link img {
+  width: 50px;
+  height: 50px;
+  border-radius: 10px;
+  cursor: pointer;
+  padding: 10px;
+  transition: all 0.3s ease;
+}
+
+.Header .menu .nav-link img:hover,
+.Header .menu .nav-link.active img {
+  background-color: var(--colorbutton2);
+  box-shadow: 0 4px 15px rgba(0, 159, 255, 0.4);
+}
+
+.Header .menu .nav-link img:active {
+  transform: scale(0.95);
+}
+
+.nav-link .icon-white {
+  display: none;
+}
+.nav-link.active .icon-white {
+  display: inline;
+}
+.nav-link.active .icon-black {
+  display: none;
+}
+
+/*Nội dung*/
+main {
+  margin-top: 20px;
+  margin-left: 120px; /* giữ khoảng chừa sidebar */
+  width: calc(100% - 150px); /* ✅ choán hết phần còn lại */
+  min-height: 100vh;
+  display: block;
+}
+/* ===== THANH TRÊN CÙNG - TOPBAR ===== */
+.reader-tophar {
+  position: fixed;
+  top: 30px;
+  left: 120px;
+  width: calc(100% - 120px);
+  height: 60px;
+  display: flex;
+  justify-content: space-between;
+  padding: 0 50px;
+  z-index: 10;
+}
+
+/* --- Bên trái: nút quay lại + tiêu đề sách --- */
+.tophar-left {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.tophar-left button {
+  background: var(--colorBG);
+  border: none;
+  border-radius: 8px;
+  padding: 4px 8px;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.15s;
+  font-size: 26px;
+}
+
+.tophar-left button:hover {
+  background: #fd7171;
+  transform: translateY(-2px);
+}
+
+.tophar-left .title span {
+  font-size: 20px;
+  font-weight: 600;
+  color: #222;
+}
+
+/* --- Bên phải: các nút chức năng --- */
+.tophar-right ul {
+  display: flex;
+  align-items: center;
+  gap: 50px;
+  list-style: none;
+  margin-right: 50px;
+  padding: 0;
+}
+
+.tophar-right li button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 26px;
+  color: #444;
+  transition: color 0.2s, transform 0.15s;
+}
+
+.tophar-right li button:hover {
+  color: #1e4fff;
+  transform: scale(1.1);
+}
+
+/* --- Icon đẹp và rõ --- */
+.tophar-right i {
+  pointer-events: none;
+}
+
+/* --- Hiệu ứng active khi click --- */
+.tophar-right li button:active {
+  transform: scale(0.95);
+}
+/*content*/
+
+/* Khu đọc chính */
+
+.reader-content {
+  margin-top: 100px;
+  display: flex;
+  justify-content: center;
+}
+
+.book-page {
+  background-color: #f9f6f1;
+  border-radius: 8px;
+  width: 100%;
+  max-width: 1300px;
+
+  padding: 30px 50px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
+  position: relative;
+  height: calc(100vh - 160px); /* trừ topbar + khoảng đệm */
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+/* Ẩn thanh cuộn nhưng vẫn cho cuộn */
+.book-page::-webkit-scrollbar {
+  display: none;
+}
+.book-page {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Tiêu đề chương */
+.chapter-header {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.chapter-header h2 {
+  font-size: 22px;
+  font-weight: 700;
+  margin-bottom: 10px;
+}
+
+.chapter-header h3 {
+  font-size: 20px;
+  font-weight: 600;
+}
+
+/* Nội dung 2 cột */
+.chapter-body {
+  display: flex;
+  justify-content: space-between;
+  gap: 60px;
+  text-align: justify;
+  line-height: 1.8;
+}
+
+.col {
+  width: 50%;
+}
+
+.col p {
+  margin-bottom: 18px;
+  text-indent: 30px;
+}
+
+/* Footer nút điều hướng */
+.chapter-footer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 40px;
+  font-size: 16px;
+  color: #333;
+  gap: 24px;
+}
+
+.chapter-footer button {
+  background: none;
+  border: none;
+  font-size: 22px;
+  color: #555;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.chapter-footer button:hover {
+  color: var(--colorbutton2);
+  transform: scale(1.1);
+}
+
+/* --- Overlay nền tối --- */
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.4);
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s ease;
+  z-index: 15;
+}
+
+/* --- Panel danh sách chương --- */
+.chapter-list {
+  position: fixed;
+  top: 0;
+  right: -400px; /* ẩn ban đầu */
+  width: 400px;
+  height: 100%;
+  background: #fdfbf5;
+  box-shadow: -4px 0 20px rgba(0, 0, 0, 0.15);
+  transition: all 0.4s ease;
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+}
+
+.chapter-list-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 24px;
+  border-bottom: 2px solid #eee;
+}
+
+.chapter-list-header h3 {
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.chapter-list-header button {
+  background: none;
+  border: none;
+  font-size: 22px;
+  cursor: pointer;
+  color: #555;
+}
+
+.chapter-list ul {
+  list-style: none;
+  padding: 20px;
+  overflow-y: auto;
+}
+
+.chapter-list ul li {
+  padding: 12px 0;
+  border-bottom: 1px solid #ddd;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.chapter-list ul li:hover {
+  color: #1e4fff;
+  padding-left: 8px;
+}
+
+/* --- Khi bật panel --- */
+.chapter-list.active {
+  right: 0;
+}
+
+.overlay.active {
+  opacity: 1;
+  visibility: visible;
+}
+/*----------------------------------------*/
+
+/* Vùng chứa toàn bộ nội dung đọc */
+.converted-content {
+  position: relative;
+  overflow: hidden;
+  height: 1200px; /* Chiều cao mỗi trang, tùy ý chỉnh */
+  padding: 40px 60px;
+  background: #fdfaf6;
+  border-radius: 10px;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.08);
+  font-size: 18px;
+  line-height: 1.8;
+  color: #222;
+  text-align: justify;
+  transition: all 0.4s ease;
+  width: 100%;
+}
+
+/* Mỗi trang */
+.converted-content .page {
+  display: none;
+  opacity: 0;
+  transition: opacity 0.4s ease, transform 0.3s ease;
+  white-space: pre-wrap; /* giữ nguyên xuống dòng */
+}
+
+/* Trang đang hiển thị */
+.converted-content .page.active {
+  display: block;
+  opacity: 1;
+  transform: translateX(0);
+}
+
+/* Hiệu ứng mượt khi chuyển trang */
+.converted-content .page:not(.active) {
+  transform: translateX(30px);
+}
+
+/* Tiêu đề, đoạn văn trong mỗi trang */
+.converted-content .page h1,
+.converted-content .page h2,
+.converted-content .page h3 {
+  text-align: center;
+  margin: 30px 0 20px;
+  font-weight: 700;
+}
+.converted-content .page p {
+  margin-bottom: 18px;
+  text-indent: 30px;
+}
+
+/* =============================
+   🔹 THANH ĐIỀU HƯỚNG DƯỚI
+   ============================= */
+.chapter-footer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 30px;
+  gap: 20px;
+  font-size: 16px;
+  color: #333;
+}
+
+.chapter-footer button {
+  background: none;
+  border: none;
+  font-size: 22px;
+  color: #555;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.chapter-footer button:hover {
+  color: var(--colorbutton2);
+  transform: scale(1.2);
+}
+
+.chapter-footer span {
+  font-size: 16px;
+  font-weight: 600;
+  color: #444;
+}

@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Upload Sách</title>
+    <link rel="stylesheet" href="/static/CSS/upload.css" />
+  </head>
+  <body>
+    <header>
+      <div class="logo">📚 BookUploader</div>
+      <nav>
+        <button id="btn-upload" class="active">Trang Upload</button>
+        <button id="btn-history">Lịch Sử Upload</button>
+      </nav>
+    </header>
+
+    <!-- Upload Form -->
+    <div class="container" id="upload-section">
+      <div class="part 1">
+        <h2>1. Thông Tin Sách</h2>
+        <label>Tiêu đề sách:</label>
+        <input type="text" id="title" placeholder="Nhà Giả Kim" />
+
+        <label>Tác giả:</label>
+        <input type="text" id="author" placeholder="Paulo Coelho" />
+
+        <label>Thể loại:</label>
+        <select id="genre">
+          <option>Tiểu thuyết</option>
+          <option>Khoa học</option>
+          <option>Lịch sử</option>
+          <option>Kinh doanh</option>
+          <option>Khác</option>
+        </select>
+
+        <label>Mô tả ngắn / Tóm tắt:</label>
+        <textarea
+          id="summary"
+          maxlength="500"
+          placeholder="Tóm tắt nội dung sách..."
+        ></textarea>
+
+        <label>Ngôn ngữ:</label>
+        <select id="language">
+          <option>Tiếng Việt</option>
+          <option>Tiếng Anh</option>
+          <option>Khác</option>
+        </select>
+      </div>
+      <!--p2-->
+      <div class="part 2">
+        <h2>2. Tệp Tin & Hình Ảnh</h2>
+        <label>Tải lên Tệp Sách (PDF, EPUB, MOBI ≤ 50MB):</label>
+        <input type="file" id="book-file" accept=".pdf,.epub,.mobi" />
+
+        <label>Tải lên Ảnh Bìa (JPG, PNG ≤ 5MB):</label>
+        <input type="file" id="cover-file" accept=".jpg,.jpeg,.png" />
+      </div>
+      <!--p3-->
+      <div class="part 3">
+        <h2>3. Điều Khoản & Gửi</h2>
+        <div class="checkbox-group">
+          <input type="checkbox" id="rights" />
+          <label for="rights"
+            >Tôi xác nhận rằng tôi có đầy đủ quyền để chia sẻ và xuất bản nội
+            dung sách này trên nền tảng.</label
+          >
+        </div>
+
+        <div class="checkbox-group">
+          <input type="checkbox" id="terms" />
+          <label for="terms"
+            >Tôi đã đọc và đồng ý với <a href="#">Điều khoản Dịch vụ</a> và
+            <a href="#">Chính sách Tải lên</a>.</label
+          >
+        </div>
+
+        <button class="btn-submit" id="upload-btn">
+          📤 Tải Lên & Gửi Duyệt
+        </button>
+      </div>
+    </div>
+
+    <!-- History -->
+    <div class="history-container" id="history-section">
+      <h2>Lịch Sử Upload</h2>
+      <div id="history-list">
+        <!-- Các sách upload sẽ hiển thị ở đây -->
+      </div>
+    </div>
+
+    <script>
+      const btnUpload = document.getElementById("btn-upload");
+      const btnHistory = document.getElementById("btn-history");
+      const uploadSection = document.getElementById("upload-section");
+      const historySection = document.getElementById("history-section");
+      const historyList = document.getElementById("history-list");
+
+      // Chuyển giữa 2 trang
+      btnUpload.addEventListener("click", () => {
+        btnUpload.classList.add("active");
+        btnHistory.classList.remove("active");
+        uploadSection.style.display = "block";
+        historySection.style.display = "none";
+      });
+
+      btnHistory.addEventListener("click", async () => {
+        btnHistory.classList.add("active");
+        btnUpload.classList.remove("active");
+        uploadSection.style.display = "none";
+        historySection.style.display = "block";
+
+        historyList.innerHTML = "<p>⏳ Đang tải lịch sử...</p>";
+
+        try {
+          const res = await fetch("/api/user-history");
+          const data = await res.json();
+
+          if (res.ok) {
+            if (data.length === 0) {
+              historyList.innerHTML =
+                "<p>📭 Chưa có sách nào được tải lên.</p>";
+              return;
+            }
+
+            historyList.innerHTML = "";
+            data.forEach((book) => {
+              const item = document.createElement("div");
+              item.className = "history-item";
+              item.innerHTML = `
+          <img src="${
+            book.cover_image || "/static/images/default.jpg"
+          }" alt="bìa" width="80">
+          <div>
+            <h3>${book.title}</h3>
+            <p>${book.author}</p>
+            <small>${book.created_at}</small>
+            <button class="btn-delete" data-id="${book.id}">🗑️ Xoá</button>
+          </div>
+        `;
+              historyList.appendChild(item);
+            });
+
+            // Gán sự kiện xoá
+            document.querySelectorAll(".btn-delete").forEach((btn) => {
+              btn.addEventListener("click", async () => {
+                const id = btn.getAttribute("data-id");
+                if (!confirm("Xoá sách này chứ?")) return;
+                const del = await fetch(`/api/delete-book/${id}`, {
+                  method: "DELETE",
+                });
+                const result = await del.json();
+                if (del.ok) {
+                  alert("✅ Xoá thành công!");
+                  btn.closest(".history-item").remove();
+                } else alert("❌ " + result.error);
+              });
+            });
+          } else {
+            historyList.innerHTML = `<p>⚠️ ${
+              data.error || "Không thể tải lịch sử!"
+            }</p>`;
+          }
+        } catch (err) {
+          console.error(err);
+          historyList.innerHTML = "<p>❌ Lỗi khi tải lịch sử.</p>";
+        }
+      });
+
+      // Xử lý upload
+      document
+        .getElementById("upload-btn")
+        .addEventListener("click", async () => {
+          const title = document.getElementById("title").value.trim();
+          const author = document.getElementById("author").value.trim();
+          const genre = document.getElementById("genre").value;
+          const summary = document.getElementById("summary").value;
+          const language = document.getElementById("language").value;
+          const rightsChecked = document.getElementById("rights").checked;
+          const termsChecked = document.getElementById("terms").checked;
+          const bookFile = document.getElementById("book-file").files[0];
+          const coverFile = document.getElementById("cover-file").files[0];
+
+          // Kiểm tra đầu vào
+          if (!title || !author) {
+            alert("⚠️ Vui lòng nhập Tiêu đề và Tác giả!");
+            return;
+          }
+          if (!rightsChecked || !termsChecked) {
+            alert("⚠️ Bạn cần đồng ý với điều khoản!");
+            return;
+          }
+          if (!bookFile) {
+            alert("⚠️ Cần chọn file sách (PDF, EPUB, MOBI)!");
+            return;
+          }
+
+          // Chuẩn bị form gửi
+          const formData = new FormData();
+          formData.append("title", title);
+          formData.append("author", author);
+          formData.append("genre", genre);
+          formData.append("summary", summary);
+          formData.append("language", language);
+          formData.append("book_file", bookFile);
+          if (coverFile) formData.append("cover_file", coverFile);
+
+          // Gửi đến Flask
+          try {
+            const res = await fetch("/api/upload-book", {
+              method: "POST",
+              body: formData,
+            });
+
+            const data = await res.json();
+            if (res.ok) {
+              alert("✅ Upload thành công!");
+              console.log("Server trả về:", data);
+
+              // ✅ Hiển thị ngay sách vừa upload trong lịch sử
+              const item = document.createElement("div");
+              item.className = "history-item";
+              item.setAttribute("data-id", data.book_id); // ✅ Lưu id sách vừa upload
+
+              item.innerHTML = `
+        <p><strong>${title}</strong> - ${author}</p>
+        <p>📘 Tệp sách: ${bookFile.name}</p>
+        <p>🖼️ Ảnh bìa: ${coverFile ? coverFile.name : "Không có ảnh"}</p>
+        <button class="btn-delete">Xoá</button>
+      `;
+
+              // 🧹 Khi bấm nút "Xoá"
+              item
+                .querySelector(".btn-delete")
+                .addEventListener("click", async () => {
+                  const bookId = item.getAttribute("data-id");
+                  if (!bookId) {
+                    alert("⚠️ Không tìm thấy ID sách để xoá!");
+                    return;
+                  }
+
+                  if (!confirm("Bạn có chắc muốn xoá sách này không?")) return;
+
+                  try {
+                    const res = await fetch(`/api/delete-book/${bookId}`, {
+                      method: "DELETE",
+                    });
+                    const result = await res.json();
+
+                    if (res.ok) {
+                      alert("✅ Xoá thành công khỏi DB!");
+                      item.remove(); // Xoá khỏi giao diện
+                    } else {
+                      alert("❌ Lỗi xoá: " + (result.error || "Không rõ"));
+                    }
+                  } catch (err) {
+                    console.error("❌ Lỗi khi xoá:", err);
+                    alert("⚠️ Không thể kết nối server khi xoá!");
+                  }
+                });
+
+              historyList.prepend(item);
+
+              // Reset form
+              document
+                .querySelectorAll("input[type='text'], textarea")
+                .forEach((el) => (el.value = ""));
+              document
+                .querySelectorAll("input[type='file']")
+                .forEach((el) => (el.value = ""));
+              document
+                .querySelectorAll("input[type='checkbox']")
+                .forEach((el) => (el.checked = false));
+            } else {
+              alert("❌ Lỗi: " + (data.error || "Không rõ"));
+            }
+          } catch (err) {
+            console.error(err);
+            alert("❌ Lỗi kết nối tới server!");
+          }
+        }); <!-- ✅ đóng đầy đủ hàm click -->
+    </script>
+  </body>
+</html>

@@ -1,0 +1,37 @@
+{% extends "admin/layout.html" %} {% block content %}
+<h2 class="mb-4 text-center">📊 Tổng quan hệ thống</h2>
+
+<div class="row g-4 text-white">
+  <div class="col-md-3 col-sm-6">
+    <div class="card bg-primary shadow-lg p-3 text-center rounded-4">
+      <h1>📚</h1>
+      <h3>{{ total_books }}</h3>
+      <p class="mb-0">Tổng số sách</p>
+    </div>
+  </div>
+
+  <div class="col-md-3 col-sm-6">
+    <div class="card bg-success shadow-lg p-3 text-center rounded-4">
+      <h1>👥</h1>
+      <h3>{{ total_users }}</h3>
+      <p class="mb-0">Người dùng</p>
+    </div>
+  </div>
+
+  <div class="col-md-3 col-sm-6">
+    <div class="card bg-warning text-dark shadow-lg p-3 text-center rounded-4">
+      <h1>💬</h1>
+      <h3>{{ total_comments }}</h3>
+      <p class="mb-0">Bình luận</p>
+    </div>
+  </div>
+
+  <div class="col-md-3 col-sm-6">
+    <div class="card bg-danger shadow-lg p-3 text-center rounded-4">
+      <h1>📖</h1>
+      <h3>{{ total_reads }}</h3>
+      <p class="mb-0">Lượt đọc</p>
+    </div>
+  </div>
+</div>
+{% endblock %}

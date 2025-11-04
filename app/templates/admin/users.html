@@ -1,0 +1,23 @@
+{% extends "admin/layout.html" %} {% block content %}
+<h3 class="mb-3">👥 Quản lý người dùng</h3>
+<table class="table table-striped align-middle">
+  <tr>
+    <th>ID</th>
+    <th>Tên</th>
+    <th>Email</th>
+    <th>Role</th>
+    <th>Hành động</th>
+  </tr>
+  {% for u in users %}
+  <tr>
+    <td>{{ u.id }}</td>
+    <td>{{ u.username }}</td>
+    <td>{{ u.email }}</td>
+    <td>{{ u.role }}</td>
+    <td>
+      <a href="/users/delete/{{ u.id }}" class="btn btn-sm btn-danger">Xóa</a>
+    </td>
+  </tr>
+  {% endfor %}
+</table>
+{% endblock %}

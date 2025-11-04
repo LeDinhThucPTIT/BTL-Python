@@ -1,0 +1,95 @@
+{% extends "admin/layout.html" %} {% block content %}
+<h3 class="mb-4 text-center">📚 Thêm sách mới</h3>
+
+<form
+  method="POST"
+  enctype="multipart/form-data"
+  class="mx-auto"
+  style="max-width: 650px"
+>
+  <div class="mb-3">
+    <label class="form-label fw-bold">Tên sách</label>
+    <input
+      class="form-control"
+      name="title"
+      placeholder="Nhập tên sách"
+      required
+    />
+  </div>
+
+  <div class="mb-3">
+    <label class="form-label fw-bold">Tác giả</label>
+    <input
+      class="form-control"
+      name="author"
+      placeholder="Tên tác giả"
+      required
+    />
+  </div>
+
+  <div class="mb-3">
+    <label class="form-label fw-bold">Thể loại</label>
+    <input
+      class="form-control"
+      name="genre"
+      placeholder="Ví dụ: Khoa học, Văn học, ..."
+      required
+    />
+  </div>
+
+  <div class="mb-3">
+    <label class="form-label fw-bold">Tóm tắt nội dung</label>
+    <textarea
+      class="form-control"
+      name="summary"
+      rows="3"
+      placeholder="Mô tả ngắn gọn về sách..."
+    ></textarea>
+  </div>
+
+  <div class="mb-3">
+    <label class="form-label fw-bold">Ảnh bìa</label>
+    <input
+      type="file"
+      class="form-control"
+      name="cover"
+      accept="image/*"
+      onchange="previewImage(event)"
+    />
+    <div class="mt-3 text-center">
+      <img
+        id="preview"
+        src="#"
+        alt="Xem trước ảnh bìa"
+        style="max-width: 200px; display: none; border-radius: 8px"
+      />
+    </div>
+  </div>
+
+  <div class="mb-4">
+    <label class="form-label fw-bold">File sách (PDF)</label>
+    <input
+      type="file"
+      class="form-control"
+      name="book_file"
+      accept=".pdf"
+      required
+    />
+  </div>
+
+  <button class="btn btn-success w-100">📘 Lưu sách</button>
+</form>
+
+<script>
+  function previewImage(event) {
+    const file = event.target.files[0];
+    const preview = document.getElementById("preview");
+    if (file) {
+      preview.src = URL.createObjectURL(file);
+      preview.style.display = "block";
+    } else {
+      preview.style.display = "none";
+    }
+  }
+</script>
+{% endblock %}

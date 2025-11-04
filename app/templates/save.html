@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <link rel="stylesheet" href="../static/css/reset.css" />
+    <link rel="stylesheet" href="../static/css/base.css" />
+    <link rel="stylesheet" href="../static/css/styleHome.css" />
+    <link rel="stylesheet" href="../static/css/history.css" />
+    <link rel="stylesheet" href="../static/css/save.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css"
+      integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+  </head>
+  <body>
+    <div class="Body">
+      <div class="Header">
+        <div class="logo">
+          <img src="../static/images/Logo/Logo.png" alt="logo" />
+        </div>
+        <ul class="menu">
+          <li class="nav-link Home">
+            <a href="/home">
+              <img
+                src="../static/images/Logo/House1.png"
+                class="icon-white"
+                alt="Trang chủ trắng"
+              />
+              <img
+                src="../static/images/Logo/House2.png"
+                class="icon-black"
+                alt="Trang chủ đen"
+              />
+            </a>
+          </li>
+          <li class="nav-link History">
+            <a href="/history">
+              <img
+                src="../static/images/Logo/History1.png"
+                class="icon-white"
+                alt="Lịch sử trắng"
+              />
+              <img
+                src="../static/images/Logo/History2.png"
+                class="icon-black"
+                alt="Lich sử đen"
+              />
+            </a>
+          </li>
+          <li class="nav-link Save active">
+            <a href="/save">
+              <img
+                src="../static/images/Logo/Save1.png"
+                class="icon-white"
+                alt="Lưu trữ trắng"
+              />
+              <img
+                src="../static/images/Logo/Save2.png"
+                class="icon-black"
+                alt="Lưu trữ đen"
+              />
+            </a>
+          </li>
+          <li class="nav-link Setting">
+            <a href="/setting">
+              <img
+                src="../static/images/Logo/Setting1.png"
+                class="icon-white"
+                alt="Cài đặt trắng"
+              />
+              <img
+                src="../static/images/Logo/Setting2.png"
+                class="icon-black"
+                alt="Cài đặt đen"
+              />
+            </a>
+          </li>
+        </ul>
+      </div>
+      <!-- Thanh tìm kiếm -->
+      <div class="Tophar">
+        <div class="tophar-left">
+          <div class="Search-button">
+            <img src="../static/images/Logo/Search.png" alt="Tìm kiếm" />
+          </div>
+          <div class="Search-input">
+            <input
+              type="text"
+              class="Search-input-text"
+              placeholder="Search book, name, author..."
+            />
+          </div>
+        </div>
+        <div class="tophar-right">
+          <div class="button language tophar-language">
+            <span class="text">VN</span>
+            <img
+              src="../static/images/Logo/Image VN.png"
+              alt="VN"
+              class="icon flag"
+            />
+          </div>
+          <div class="tophar-user">
+            <a href="/setting">
+              <img
+                src="{{ user.avatar if user.avatar else '/static/images/Logo/Avatar.png' }}"
+                alt="avatar"
+                class="topbar-user-avatar"
+              />
+              <span class="topbar-user-name">{{ user.username }}</span>
+            </a>
+          </div>
+          <div class="topbar-notify">
+            <img
+              src="../static/images/Logo/Bell.png"
+              alt="notify"
+              class="topbar-notify-icon"
+            />
+          </div>
+        </div>
+      </div>
+      <div class="Content-right">
+        <!--Nội dung chính-->
+        <main class="Main">
+          <div class="save-text">
+            <h3>LƯU TRỮ</h3>
+          </div>
+
+          <!-- 📘 Khu vực JS sẽ render danh sách -->
+          <div class="save-container">
+            <!-- JS sẽ tự thêm nội dung vào đây -->
+          </div>
+          <!-- Footer -->
+        </main>
+        <footer class="footer">
+          <div class="footer-container">
+            <!-- Cột logo + mô tả -->
+            <div class="footer-column footer-about">
+              <div class="footer-logo">
+                <img src="../static/images/Logo/Logo.png" alt="logo" />
+              </div>
+              <p>
+                Reading books is like opening a door to another world. Each page
+                takes you on a journey — through time, imagination, and emotion.
+                Books help us learn, dream, and understand life from different
+                perspectives. A good book isn’t just read; it’s felt.
+              </p>
+            </div>
+
+            <!-- Cột Services -->
+            <div class="footer-column">
+              <h3>Services</h3>
+              <ul>
+                <li><a href="#">Email Marketing</a></li>
+                <li><a href="#">Campaigns</a></li>
+                <li><a href="#">Branding</a></li>
+                <li><a href="#">Offline</a></li>
+              </ul>
+            </div>
+
+            <!-- Cột About -->
+            <div class="footer-column">
+              <h3>About</h3>
+              <ul>
+                <li><a href="#">Our Story</a></li>
+                <li><a href="#">Benefits</a></li>
+                <li><a href="#">Team</a></li>
+                <li><a href="#">Careers</a></li>
+              </ul>
+            </div>
+
+            <!-- Cột Follow -->
+            <div class="footer-column">
+              <h3>Follow Us</h3>
+              <ul class="footer-social">
+                <li>
+                  <a href="#"><i class="fab fa-facebook-f"></i> Facebook</a>
+                </li>
+                <li>
+                  <a href="#"><i class="fab fa-twitter"></i> Twitter</a>
+                </li>
+                <li>
+                  <a href="#"><i class="fab fa-instagram"></i> Instagram</a>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </footer>
+      </div>
+    </div>
+    <script>
+      // Truyền URL static cho JS
+      window.STATIC_URL = "{{ url_for('static', filename='') }}";
+    </script>
+    <script src="{{ url_for('static', filename='Javascript/save.js') }}"></script>
+    <script src="/static/Javascript/save.js"></script>
+  </body>
+</html>

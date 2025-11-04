@@ -1,0 +1,247 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Poppins", sans-serif;
+}
+body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-image: url(../images/Background/BG.png);
+  position: relative;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Poppins", sans-serif;
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+
+.box {
+  width: 400px;
+  border-radius: 8px;
+  text-align: center;
+  position: absolute;
+  left: 61%;
+  top: 25%;
+  height: 526px;
+  opacity: 1;
+  gap: 20px;
+}
+
+h2 {
+  text-align: left;
+  font-size: normal;
+  font-weight: 600;
+  font-size: 30px;
+  color: var(--colortext);
+}
+h4 {
+  text-align: left;
+  font-size: normal;
+  font-weight: 500;
+  font-size: 14px;
+  color: var(--colortext);
+  margin-bottom: 25px;
+  margin-top: 10px;
+}
+
+.login-btn {
+  width: 400px;
+  height: 50px;
+  background: #fff;
+  display: flex;
+  text-align: center;
+  align-items: center;
+  justify-content: center;
+  font-weight: 500;
+  color: var(--colortext);
+  font-size: 16px;
+  margin-top: 20px;
+  border: 2px solid #181821;
+  border-radius: 10px;
+  cursor: pointer;
+  gap: 10px;
+}
+.login-btn:hover {
+  background: #f5e5dc;
+}
+
+.login-btn.facebook .icon.logo {
+  width: 20px;
+  height: 20px;
+}
+
+.divider {
+  margin: 15px 0;
+  color: #888;
+  font-size: 12px;
+  position: relative;
+}
+
+.divider::before,
+.divider::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  width: 40%;
+  height: 1px;
+  background: #ddd;
+}
+
+.divider::before {
+  left: 0;
+}
+.divider::after {
+  right: 0;
+}
+
+.input-box {
+  position: relative;
+  width: 400px;
+  margin-bottom: 20px; /* cách đều giữa các ô */
+}
+
+.input-box input {
+  width: 100%;
+  padding: 15px;
+  border: 2px solid #181821;
+  border-radius: 10px;
+  font-size: 16px;
+  outline: none;
+  transition: 0.2s ease;
+}
+
+/* Label dính cứng trên border */
+.input-box label {
+  position: absolute;
+  top: -10px;
+  left: 15px;
+  background: #fff;
+  padding: 0 5px;
+  font-size: 16px;
+  color: #181821;
+  font-weight: 500;
+}
+
+/* Icon mắt trong ô mật khẩu */
+.input-box.password .toggle-password {
+  position: absolute;
+  right: 15px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  color: #181821;
+  font-size: 18px;
+}
+
+/* Hiệu ứng khi focus input */
+.input-box input:focus {
+  border-color: #007bff; /* xanh dương */
+}
+
+.input-box input:focus + label {
+  color: #007bff; /* label đổi màu */
+}
+
+.options {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 14px;
+  margin-bottom: 15px;
+  font-weight: 500;
+}
+.checkbox-custom {
+  position: relative;
+  padding-left: 30px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.checkbox-custom input {
+  position: absolute;
+  opacity: 0; /* ẩn checkbox mặc định */
+  cursor: pointer;
+}
+
+.checkmark {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 20px;
+  height: 20px;
+  border: 2px solid #181821;
+  border-radius: 5px; /* bo tròn góc */
+  background: #fff;
+}
+
+/* khi được tick */
+.checkbox-custom input:checked ~ .checkmark {
+  background: #181821;
+}
+
+/* Vẽ dấu check đẹp hơn */
+.checkbox-custom input:checked ~ .checkmark::after {
+  content: "";
+  position: absolute;
+  left: 4px; /* dịch nhẹ sang phải */
+  top: 1px; /* dịch nhẹ lên trên */
+  width: 6px;
+  height: 12px;
+  border: solid #fff;
+  border-width: 0 3px 3px 0; /* nét dày hơn */
+  transform: rotate(45deg);
+  border-radius: 1px; /* bo góc nét cho mềm */
+  transition: all 0.2s ease-in-out; /* hiệu ứng mượt */
+}
+
+.options a {
+  text-decoration: none;
+  color: #009bff;
+  font-weight: 500;
+}
+
+.submit {
+  width: 400px;
+  height: 50px;
+  border: none;
+  border-radius: 10px;
+  background: #009bff; /* xanh dương */
+  color: #fff;
+  font-weight: 500;
+  font-size: 18px;
+  cursor: pointer;
+}
+.submit:hover {
+  background: var(--colorbutton2); /* đổi màu khi hover */
+}
+
+.signup-text,
+.signin-text,
+.forgot-password-text {
+  margin-top: 15px;
+  font-size: 16px;
+  font-weight: 500;
+}
+.signup-text a,
+.signin-text a,
+.forgot-password-text a {
+  text-decoration: none;
+  color: #009bff;
+}
+.forgot-password-text span {
+  color: #181821;
+  font-weight: 600;
+  margin: 0 5px;
+}
+.button.language.login-language {
+  position: absolute;
+  top: 30px;
+  left: 93%;
+}
+.hidden {
+  display: none;
+}

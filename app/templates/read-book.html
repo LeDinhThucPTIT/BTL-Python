@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{{ book.title }}</title>
+
+    <!-- CSS -->
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='CSS/reset.css') }}"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='CSS/base.css') }}"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='CSS/read-book.css') }}"
+    />
+
+    <!-- Font Awesome -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css"
+      integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+  </head>
+
+  <body>
+    <!-- HEADER -->
+    <div class="Header">
+      <div class="logo">
+        <img
+          src="{{ url_for('static', filename='images/Logo/Logo.png') }}"
+          alt="logo"
+        />
+      </div>
+      <ul class="menu">
+        <li class="nav-link Home active">
+          <a href="/home">
+            <img
+              src="{{ url_for('static', filename='images/Logo/House1.png') }}"
+              class="icon-white"
+            />
+            <img
+              src="{{ url_for('static', filename='images/Logo/House2.png') }}"
+              class="icon-black"
+            />
+          </a>
+        </li>
+        <li class="nav-link History">
+          <a href="/history">
+            <img
+              src="{{ url_for('static', filename='images/Logo/History1.png') }}"
+              class="icon-white"
+            />
+            <img
+              src="{{ url_for('static', filename='images/Logo/History2.png') }}"
+              class="icon-black"
+            />
+          </a>
+        </li>
+        <li class="nav-link Save">
+          <a href="/save">
+            <img
+              src="{{ url_for('static', filename='images/Logo/Save1.png') }}"
+              class="icon-white"
+            />
+            <img
+              src="{{ url_for('static', filename='images/Logo/Save2.png') }}"
+              class="icon-black"
+            />
+          </a>
+        </li>
+        <li class="nav-link Setting">
+          <a href="/setting">
+            <img
+              src="{{ url_for('static', filename='images/Logo/Setting1.png') }}"
+              class="icon-white"
+            />
+            <img
+              src="{{ url_for('static', filename='images/Logo/Setting2.png') }}"
+              class="icon-black"
+            />
+          </a>
+        </li>
+      </ul>
+    </div>
+
+    <!-- MAIN -->
+    <main>
+      <!-- Thanh tiêu đề trên -->
+      <div class="reader-tophar">
+        <div class="tophar-left">
+          <a href="/book/{{ book.id }}">
+            <button><i class="fa-solid fa-angle-left"></i></button>
+          </a>
+          <div class="title"><span>{{ book.title }}</span></div>
+        </div>
+        <div class="tophar-right">
+          <ul>
+            <li class="list">
+              <button><i class="fa-solid fa-list-ul"></i></button>
+            </li>
+            <li class="save">
+              <button><i class="fa-regular fa-bookmark"></i></button>
+            </li>
+            <li class="note">
+              <button><i class="fa-regular fa-pen-to-square"></i></button>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Nội dung đọc sách -->
+      <div class="reader-content">
+        <div class="book-page">
+          <div class="chapter-header">
+            <h2>{{ book.title }}</h2>
+            <h3>{{ book.author }}</h3>
+          </div>
+
+          <div class="chapter-body">
+            {% if content %}
+            <div class="converted-content">{{ content|safe }}</div>
+            {% else %}
+            <iframe
+              src="{{ book.file_path }}"
+              width="100%"
+              height="800px"
+              style="border: none"
+            ></iframe>
+            {% endif %}
+          </div>
+
+          <div class="chapter-footer">
+            <button class="prev"><i class="fa-solid fa-angle-left"></i></button>
+            <span>1/10</span>
+            <button class="next">
+              <i class="fa-solid fa-angle-right"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Overlay & danh sách chương -->
+      <div class="overlay" id="overlay"></div>
+      <div class="chapter-list" id="chapterList">
+        <div class="chapter-list-header">
+          <h3>Danh sách chương</h3>
+          <button id="closeList"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <ul>
+          <li>Chương 1</li>
+          <li>Chương 2</li>
+          <li>Chương 3</li>
+          <li>Chương 4</li>
+          <li>Chương 5</li>
+        </ul>
+      </div>
+    </main>
+
+    <script src="/static/Javascript/read-book.js"></script>
+  </body>
+</html>

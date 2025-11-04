@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="../static/css/reset.css" />
+    <link rel="stylesheet" href="../static/css/base.css" />
+    <link rel="stylesheet" href="../static/css/styleLogin.css" />
+
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css"
+      integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+    <title>APP</title>
+  </head>
+  <body>
+    <!--Đăng nhập-->
+    <div class="login-container box" id="loginContainer">
+      <h2>Đăng nhập</h2>
+
+      <button class="login-btn google">
+        <img
+          src="../static/images/Logo/Google.png"
+          alt="logoGG"
+          class="icon logo"
+        />
+        Đăng nhập bằng Google
+      </button>
+      <button class="login-btn facebook">
+        <img
+          src="../static/images/Logo/facebook.png"
+          alt="logoFB"
+          class="icon logo"
+        />
+        Đăng nhập bằng Facebook
+      </button>
+
+      <div class="divider">Or</div>
+
+      <form>
+        <div class="input-box email">
+          <label for="email">Email</label>
+          <input type="text" id="email" />
+        </div>
+        <div class="input-box password">
+          <label for="password">Mật khẩu</label>
+          <input type="password" id="password" />
+          <span class="toggle-password" onclick="togglePassword()">
+            <i class="fa-regular fa-eye-slash"></i>
+          </span>
+        </div>
+
+        <div class="options">
+          <label class="checkbox-custom">
+            <input type="checkbox" />
+            <span class="checkmark"></span>
+            Ghi nhớ đăng nhập
+          </label>
+
+          <a href="#" id="forgotPassword">Quên mật khẩu?</a>
+        </div>
+
+        <button type="submit" class="login submit" ib="">Đăng nhập</button>
+      </form>
+
+      <p class="signup-text">
+        Chưa có tài khoản? <a href="#" id="switch-to-register">Đăng ký</a>
+      </p>
+    </div>
+
+    <!--Đăng ký-->
+    <div class="register-container box hidden" id="registerContainer">
+      <div class="text">
+        <h2>Đăng ký</h2>
+        <h4>Hãy đến và tạo tài khoản</h4>
+      </div>
+      <form id="registerForm">
+        <div class="input-box name">
+          <label for="name">Họ và tên</label>
+          <input type="text" id="name-reg" />
+        </div>
+        <div class="input-box username">
+          <label for="username">Tên tài khoản</label>
+          <input type="text" id="username-reg" />
+        </div>
+        <div class="input-box email">
+          <label for="email">Email</label>
+          <input type="email" id="email-reg" />
+        </div>
+        <div class="input-box phonenumber">
+          <label for="phonenumber">Số điện thoại</label>
+          <input type="text" id="phonenumber-reg" />
+        </div>
+        <div class="input-box password">
+          <label for="password">Mật khẩu</label>
+          <input type="password" id="password-reg" />
+          <span class="toggle-password" onclick="togglePassword()">
+            <i class="fa-regular fa-eye-slash"></i>
+          </span>
+        </div>
+        <div class="input-box password confirm">
+          <label for="repassword">Nhập lại mật khẩu</label>
+          <input type="password" id="repassword-reg" />
+          <span class="toggle-password" onclick="togglePassword()">
+            <i class="fa-regular fa-eye-slash"></i>
+          </span>
+        </div>
+        <button type="submit" class="register submit">Đăng ký</button>
+      </form>
+      <p class="signin-text" id="switch-to-login">
+        <a href="#">Đăng nhập</a>
+      </p>
+    </div>
+
+    <div class="button language login-language">
+      <span class="text">VN</span>
+      <img
+        src="../static/images/Logo/Image VN.png"
+        alt="VN"
+        class="icon flag"
+      />
+    </div>
+
+    <!-- Quên mật khẩu -->
+    <div class="forgot-password box hidden" id="forgotContainer">
+      <div class="text">
+        <h2>Quên mật khẩu</h2>
+        <h4>Nhập email hoặc số điện thoại liên kết với tài khoản</h4>
+      </div>
+      <form action="">
+        <div class="input-box email-or-phone">
+          <label for="name">Email hoặc số điện thoại</label>
+          <input type="text" id="name-for" />
+        </div>
+        <div class="input-box password forgot-password">
+          <label for="forgot-password">Mật khẩu mới</label>
+          <input type="password" id="forgot-password" />
+          <span class="toggle-password" onclick="togglePassword()">
+            <i class="fa-regular fa-eye-slash"></i>
+          </span>
+        </div>
+        <div class="input-box password forgot-password-confirm">
+          <label for="forgot-password-confirm">Nhập lại mật khẩu mới</label>
+          <input type="password" id="forgot-password-confirm" />
+          <span class="toggle-password" onclick="togglePassword()">
+            <i class="fa-regular fa-eye-slash"></i>
+          </span>
+        </div>
+        <button type="submit" class="register submit">Xác nhận</button>
+        <p class="forgot-password-text">
+          <a href="#" id="switch-to-login-2">Đăng nhập</a>
+          <span> Or </span>
+          <a href="#" id="switch-to-register-2">Đăng ký</a>
+        </p>
+      </form>
+    </div>
+
+    <script src="../static/Javascript/login.js"></script>
+  </body>
+</html>

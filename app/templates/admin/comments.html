@@ -1,0 +1,25 @@
+{% extends "admin/layout.html" %} {% block content %}
+<h3 class="mb-3">💬 Quản lý bình luận</h3>
+<table class="table table-striped align-middle">
+  <tr>
+    <th>ID</th>
+    <th>User</th>
+    <th>Sách</th>
+    <th>Nội dung</th>
+    <th>Hành động</th>
+  </tr>
+  {% for c in comments %}
+  <tr>
+    <td>{{ c.id }}</td>
+    <td>{{ c.username }}</td>
+    <td>{{ c.title }}</td>
+    <td>{{ c.content }}</td>
+    <td>
+      <a href="/comments/delete/{{ c.id }}" class="btn btn-sm btn-danger"
+        >Xóa</a
+      >
+    </td>
+  </tr>
+  {% endfor %}
+</table>
+{% endblock %}
