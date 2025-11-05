@@ -1,6 +1,8 @@
 {% extends "admin/layout.html" %} {% block content %}
 <h3 class="mb-3">📚 Quản lý sách</h3>
-<a href="/books/add" class="btn btn-success mb-3">+ Thêm sách</a>
+<a href="{{ url_for('admin.add_book') }}" class="btn btn-success mb-3"
+  >+ Thêm sách</a
+>
 <table class="table table-striped align-middle">
   <tr>
     <th>ID</th>

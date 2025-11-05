@@ -111,7 +111,7 @@ def login():
     session["role"] = user.get("role", "user")
     session["username"] = user["username"]
 
-    # 👉 Nếu là admin thì chuyển sang trang admin dashboard
+    # Nếu là admin thì chuyển sang trang admin dashboard
     if user["role"] == "admin":
         return jsonify({"success": True, "redirect": "/admin/dashboard"})
     else:
@@ -417,6 +417,52 @@ def upload_book():
         "html_path": f"/read/{book_id}"
     })
 
+# Lịch sử upload của người dùng
+@app.route("/api/user-history", methods=["GET"])
+def get_user_history():
+    db = get_db()
+    if "user_id" not in session:
+        return jsonify({"error": "Chưa đăng nhập!"}), 401
+
+    user_id = session["user_id"]
+    cursor = db.cursor(dictionary=True)
+    cursor.execute("""
+        SELECT id, title, author, genre, summary, cover_image, created_at
+        FROM books
+        WHERE uploaded_by = %s
+        ORDER BY created_at DESC
+    """, (user_id,))
+    books = cursor.fetchall()
+    cursor.close()
+    return jsonify(books)
+
+#  Xoá sách
+@app.route("/api/delete-book/<int:book_id>", methods=["DELETE"])
+def delete_book(book_id):
+    db = get_db()
+    if "user_id" not in session:
+        return jsonify({"error": "Chưa đăng nhập!"}), 401
+
+    user_id = session["user_id"]
+    role = session.get("role", "user")
+
+    cursor = db.cursor(dictionary=True)
+    cursor.execute("SELECT uploaded_by FROM books WHERE id = %s", (book_id,))
+    book = cursor.fetchone()
+
+    if not book:
+        return jsonify({"error": "Không tìm thấy sách!"}), 404
+
+    if role != "admin" and book["uploaded_by"] != user_id:
+        return jsonify({"error": "Bạn không có quyền xoá sách này!"}), 403
+
+    cursor = db.cursor()
+    cursor.execute("DELETE FROM books WHERE id = %s", (book_id,))
+    db.commit()
+    cursor.close()
+
+    return jsonify({"message": "Đã xoá sách thành công!"}), 200
+
 
 # ------------------------------------------
 #  Đọc sách
@@ -549,53 +595,9 @@ def delete_reading_history(book_id):
 
 
 # ------------------------------------------
-#  Xoá sách
-@app.route("/api/delete-book/<int:book_id>", methods=["DELETE"])
-def delete_book(book_id):
-    db = get_db()
-    if "user_id" not in session:
-        return jsonify({"error": "Chưa đăng nhập!"}), 401
-
-    user_id = session["user_id"]
-    role = session.get("role", "user")
-
-    cursor = db.cursor(dictionary=True)
-    cursor.execute("SELECT uploaded_by FROM books WHERE id = %s", (book_id,))
-    book = cursor.fetchone()
-
-    if not book:
-        return jsonify({"error": "Không tìm thấy sách!"}), 404
-
-    if role != "admin" and book["uploaded_by"] != user_id:
-        return jsonify({"error": "Bạn không có quyền xoá sách này!"}), 403
-
-    cursor = db.cursor()
-    cursor.execute("DELETE FROM books WHERE id = %s", (book_id,))
-    db.commit()
-    cursor.close()
-
-    return jsonify({"message": "Đã xoá sách thành công!"}), 200
-
 
 # ------------------------------------------
-# Lịch sử upload của người dùng
-@app.route("/api/user-history", methods=["GET"])
-def get_user_history():
-    db = get_db()
-    if "user_id" not in session:
-        return jsonify({"error": "Chưa đăng nhập!"}), 401
 
-    user_id = session["user_id"]
-    cursor = db.cursor(dictionary=True)
-    cursor.execute("""
-        SELECT id, title, author, genre, summary, cover_image, created_at
-        FROM books
-        WHERE uploaded_by = %s
-        ORDER BY created_at DESC
-    """, (user_id,))
-    books = cursor.fetchall()
-    cursor.close()
-    return jsonify(books)
 #---------------------------------------------
 # 📘 Trang chi tiết sách
 @app.route("/book/<int:book_id>")
