@@ -46,17 +46,17 @@ def login_admin():
 
         db = get_db()
         cursor = db.cursor(dictionary=True)
-        cursor.execute("SELECT * FROM users WHERE email=%s AND password=%s AND role='admin'", (email, password))
+        cursor.execute("SELECT * FROM users WHERE email=%s AND role='admin'", (email,))
         admin = cursor.fetchone()
 
-        if admin:
-            session["user_id"] = admin["id"]
-            session["username"] = admin["username"]
-            session["role"] = "admin"
-            flash("Đăng nhập thành công!", "success")
-            return redirect(url_for("admin.dashboard"))
+        if admin and check_password_hash(admin["password"], password):
+          session["user_id"] = admin["id"]
+          session["username"] = admin["username"]
+          session["role"] = "admin"
+          flash("Đăng nhập thành công!", "success")
+          return redirect(url_for("admin.dashboard"))
         else:
-            flash("Sai tài khoản hoặc không phải admin!", "danger")
+          flash("Sai tài khoản hoặc mật khẩu!", "danger")
 
     return render_template("login.html")  # KHÔNG cần admin/login.html nữa
 

@@ -4,7 +4,12 @@ import mysql.connector
 from werkzeug.utils import secure_filename
 from bs4 import BeautifulSoup
 import os
+import random, time
 import fitz
+from dotenv import load_dotenv
+from flask_mail import Mail, Message
+from werkzeug.security import generate_password_hash, check_password_hash
+
 # Các định dạng ảnh bìa được cho phép
 ALLOWED_COVER_EXT = {'png', 'jpg', 'jpeg', 'webp'}
 ALLOWED_BOOK_EXT = {'pdf'}
@@ -62,6 +67,21 @@ def close_db(exception=None):
     if db is not None:
         db.close()
 
+#--------------------------
+load_dotenv()
+
+app.secret_key = os.getenv("FLASK_SECRET_KEY", "supersecretkey")
+
+app.config.update({
+    "MAIL_SERVER": "smtp.gmail.com",
+    "MAIL_PORT": 587,
+    "MAIL_USE_TLS": True,
+    "MAIL_USERNAME": os.getenv("MAIL_USERNAME"),
+    "MAIL_PASSWORD": os.getenv("MAIL_PASSWORD"),
+    "MAIL_DEFAULT_SENDER": os.getenv("MAIL_DEFAULT_SENDER"),
+})
+
+mail = Mail(app)
 
 # -------------------------
 #  LOGIN PAGE
@@ -80,11 +100,11 @@ def login():
     password = data.get("password")
 
     cursor = db.cursor(dictionary=True)
-    cursor.execute("SELECT * FROM users WHERE email = %s AND password = %s", (email, password))
+    cursor.execute("SELECT * FROM users WHERE email = %s", (email,))
     user = cursor.fetchone()
 
-    if not user:
-        return jsonify({"success": False, "message": "Sai email hoặc mật khẩu!"})
+    if not user or not check_password_hash(user["password"], password):
+      return jsonify({"success": False, "message": "Sai email hoặc mật khẩu!"})
 
     # Gán session
     session["user_id"] = user["id"]
@@ -116,6 +136,8 @@ def register():
     sdt = data.get("sdt")
     password = data.get("password")
 
+    hashed_password = generate_password_hash(password, method='pbkdf2:sha256')
+
     try:
         cursor = db.cursor(dictionary=True)
         cursor.execute("SELECT id FROM users WHERE email = %s OR sdt = %s", (email, sdt))
@@ -125,7 +147,7 @@ def register():
         cursor.execute("""
             INSERT INTO users (username, email, sdt, password, role, avatar)
             VALUES (%s, %s, %s, %s, 'user', '/static/images/Logo/Avatar.png')
-        """, (username, email, sdt, password))
+        """, (username, email, sdt, hashed_password))
         db.commit()
         return jsonify({"success": True, "message": "Đăng ký thành công!"})
     except Exception as e:
@@ -135,30 +157,78 @@ def register():
 
 # ------------------------------------------
 #  Quên mật khẩu
-@app.route("/forgot", methods=["POST"])
-def forgot_password():
-    db = get_db()
+@app.route("/forgot/send-otp", methods=["POST"])
+def send_otp():
     data = request.get_json()
     email_or_phone = data.get("email_or_phone")
-    new_pass = data.get("new_pass")
 
-    cursor = db.cursor()
-    cursor.execute(
-        "SELECT * FROM users WHERE email = %s OR sdt = %s",
-        (email_or_phone, email_or_phone)
-    )
+    if not email_or_phone:
+        return jsonify({"success": False, "message": "Thiếu email hoặc số điện thoại!"}), 400
+
+    db = get_db()
+    cursor = db.cursor(dictionary=True)
+    cursor.execute("SELECT id, email FROM users WHERE email=%s OR sdt=%s", (email_or_phone, email_or_phone))
     user = cursor.fetchone()
+    cursor.close()
 
     if not user:
-        return jsonify({"success": False, "message": "Không tìm thấy tài khoản!"})
+        return jsonify({"success": False, "message": "Không tìm thấy tài khoản!"}), 404
 
-    cursor.execute(
-        "UPDATE users SET password = %s WHERE email = %s OR sdt = %s",
-        (new_pass, email_or_phone, email_or_phone)
-    )
+    otp = str(random.randint(100000, 999999))
+    session["reset_otp"] = otp
+    session["reset_user_id"] = user["id"]
+    session["reset_otp_expire"] = time.time() + 600  # 10 phút
+
+    try:
+        msg = Message(
+            subject="[BookApp] Mã OTP đặt lại mật khẩu",
+            recipients=[user["email"]],
+            body=f"Xin chào,\n\nMã OTP của bạn là: {otp}\nMã có hiệu lực trong 10 phút.\n\nNếu bạn không yêu cầu, hãy bỏ qua email này.\n\n- BookApp Team -",
+        )
+        mail.send(msg)
+        print(f"📧 OTP {otp} đã gửi tới {user['email']}")
+        return jsonify({"success": True, "message": "Mã OTP đã được gửi tới email!"}), 200
+    except Exception as e:
+        print("❌ Lỗi gửi mail:", e)
+        return jsonify({"success": False, "message": "Không thể gửi email. Vui lòng thử lại sau!"}), 500
+
+@app.route("/forgot/verify", methods=["POST"])
+def verify_otp():
+    data = request.get_json()
+    otp_input = data.get("otp")
+    new_pass = data.get("new_pass")
+
+    if not otp_input or not new_pass:
+        return jsonify({"success": False, "message": "Thiếu mã OTP hoặc mật khẩu mới!"}), 400
+
+    otp_saved = session.get("reset_otp")
+    user_id = session.get("reset_user_id")
+    expire = session.get("reset_otp_expire", 0)
+
+    if not otp_saved or not user_id:
+        return jsonify({"success": False, "message": "Không có mã OTP hợp lệ!"}), 400
+
+    if time.time() > expire:
+        session.pop("reset_otp", None)
+        session.pop("reset_user_id", None)
+        return jsonify({"success": False, "message": "Mã OTP đã hết hạn!"}), 400
+
+    if otp_input != otp_saved:
+        return jsonify({"success": False, "message": "Mã OTP không chính xác!"}), 400
+
+    hashed = generate_password_hash(new_pass, method="pbkdf2:sha256")
+    db = get_db()
+    cursor = db.cursor()
+    cursor.execute("UPDATE users SET password=%s WHERE id=%s", (hashed, user_id))
     db.commit()
+    cursor.close()
 
-    return jsonify({"success": True, "message": "Cập nhật mật khẩu thành công!"})
+    # Xoá OTP sau khi dùng
+    session.pop("reset_otp", None)
+    session.pop("reset_user_id", None)
+    session.pop("reset_otp_expire", None)
+
+    return jsonify({"success": True, "message": "Cập nhật mật khẩu thành công!"}), 200
 
 
 # ------------------------------------------

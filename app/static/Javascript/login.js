@@ -37,7 +37,7 @@ document.querySelectorAll(".toggle-password").forEach((toggle) => {
   });
 });
 // === ĐĂNG NHẬP ===
-// === ĐĂNG NHẬP ===
+
 document
   .querySelector("#loginContainer form")
   .addEventListener("submit", async (e) => {
@@ -112,40 +112,60 @@ document
   });
 
 // === QUÊN MẬT KHẨU ===
-document
-  .querySelector("#forgotContainer form")
-  .addEventListener("submit", async (e) => {
-    e.preventDefault();
+// === GỬI OTP ===
+async function sendOTP() {
+  const email_or_phone =
+    document.getElementById("email_or_phone")?.value?.trim() ||
+    document.getElementById("name-for")?.value?.trim();
+  if (!email_or_phone)
+    return alert("⚠️ Vui lòng nhập email hoặc số điện thoại!");
 
-    const email_or_phone = document.getElementById("name-for").value;
-    const new_pass = document.getElementById("forgot-password").value;
-    const confirm_pass = document.getElementById(
-      "forgot-password-confirm"
-    ).value;
+  try {
+    const res = await fetch("http://127.0.0.1:5000/forgot/send-otp", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email_or_phone }),
+    });
+    const data = await res.json();
+    alert(data.message);
 
-    if (new_pass !== confirm_pass) {
-      alert("❌ Mật khẩu xác nhận không khớp!");
-      return;
+    if (data.success) {
+      // hiện phần nhập OTP
+      document.getElementById("otp-section").style.display = "block";
     }
+  } catch (err) {
+    alert("⚠️ Không thể kết nối tới server!");
+    console.error(err);
+  }
+}
 
-    try {
-      const response = await fetch("http://127.0.0.1:5000/forgot", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email_or_phone, new_pass }),
-      });
+// === XÁC NHẬN OTP & ĐỔI MẬT KHẨU ===
+async function verifyOTP() {
+  const otp = document.getElementById("otp").value.trim();
+  const new_pass = document.getElementById("forgot-password").value.trim();
+  const confirm = document
+    .getElementById("forgot-password-confirm")
+    .value.trim();
 
-      const result = await response.json();
+  if (!otp || !new_pass || !confirm)
+    return alert("⚠️ Vui lòng nhập đủ thông tin!");
+  if (new_pass !== confirm) return alert("❌ Mật khẩu xác nhận không khớp!");
 
-      if (result.success) {
-        alert("✅ " + result.message);
-        document.getElementById("forgotContainer").classList.add("hidden");
-        document.getElementById("loginContainer").classList.remove("hidden");
-      } else {
-        alert("❌ " + result.message);
-      }
-    } catch (error) {
-      alert("⚠️ Lỗi kết nối đến server!");
-      console.error(error);
+  try {
+    const res = await fetch("http://127.0.0.1:5000/forgot/verify", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ otp, new_pass }),
+    });
+    const data = await res.json();
+    alert(data.message);
+
+    if (data.success) {
+      document.getElementById("forgotContainer").classList.add("hidden");
+      document.getElementById("loginContainer").classList.remove("hidden");
     }
-  });
+  } catch (err) {
+    alert("⚠️ Không thể kết nối tới server!");
+    console.error(err);
+  }
+}

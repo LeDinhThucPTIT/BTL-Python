@@ -125,31 +125,45 @@
     </div>
 
     <!-- Quên mật khẩu -->
+    <!-- Quên mật khẩu -->
     <div class="forgot-password box hidden" id="forgotContainer">
       <div class="text">
         <h2>Quên mật khẩu</h2>
         <h4>Nhập email hoặc số điện thoại liên kết với tài khoản</h4>
       </div>
-      <form action="">
+      <form id="forgotForm">
         <div class="input-box email-or-phone">
-          <label for="name">Email hoặc số điện thoại</label>
-          <input type="text" id="name-for" />
+          <label for="email_or_phone">Email hoặc số điện thoại</label>
+          <input type="text" id="email_or_phone" />
         </div>
-        <div class="input-box password forgot-password">
-          <label for="forgot-password">Mật khẩu mới</label>
-          <input type="password" id="forgot-password" />
-          <span class="toggle-password" onclick="togglePassword()">
-            <i class="fa-regular fa-eye-slash"></i>
-          </span>
+
+        <!-- Nút gửi OTP -->
+        <button type="button" class="register submit" onclick="sendOTP()">
+          Gửi mã OTP
+        </button>
+
+        <!-- 🔥 Thêm phần nhập OTP (ẩn ban đầu) -->
+        <div id="otp-section" style="display: none; margin-top: 20px">
+          <div class="input-box otp">
+            <label for="otp">Mã OTP</label>
+            <input type="text" id="otp" maxlength="6" />
+          </div>
+
+          <div class="input-box password forgot-password">
+            <label for="forgot-password">Mật khẩu mới</label>
+            <input type="password" id="forgot-password" />
+          </div>
+
+          <div class="input-box password forgot-password-confirm">
+            <label for="forgot-password-confirm">Nhập lại mật khẩu mới</label>
+            <input type="password" id="forgot-password-confirm" />
+          </div>
+
+          <button type="button" class="register submit" onclick="verifyOTP()">
+            Xác nhận
+          </button>
         </div>
-        <div class="input-box password forgot-password-confirm">
-          <label for="forgot-password-confirm">Nhập lại mật khẩu mới</label>
-          <input type="password" id="forgot-password-confirm" />
-          <span class="toggle-password" onclick="togglePassword()">
-            <i class="fa-regular fa-eye-slash"></i>
-          </span>
-        </div>
-        <button type="submit" class="register submit">Xác nhận</button>
+
         <p class="forgot-password-text">
           <a href="#" id="switch-to-login-2">Đăng nhập</a>
           <span> Or </span>
