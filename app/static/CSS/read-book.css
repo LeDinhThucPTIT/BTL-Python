@@ -339,6 +339,8 @@ main {
   text-align: justify;
   transition: all 0.4s ease;
   width: 100%;
+  /* text-align: center; */
+  line-height: 1.8;
 }
 
 /* Mỗi trang */

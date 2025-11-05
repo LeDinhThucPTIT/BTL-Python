@@ -5,6 +5,10 @@ from werkzeug.utils import secure_filename
 from bs4 import BeautifulSoup
 import os
 import fitz
+# Các định dạng ảnh bìa được cho phép
+ALLOWED_COVER_EXT = {'png', 'jpg', 'jpeg', 'webp'}
+ALLOWED_BOOK_EXT = {'pdf'}
+ALLOWED_HTML_EXT = {'html'}
 
 # -------------------------
 # Import Blueprint admin
